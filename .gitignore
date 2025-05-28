@@ -1,2 +1,24 @@
+load_env.py
+test_db_connection.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+env/
+venv/
+ENV/
+.venv/
+pip-wheel-metadata/
+*.log
+
+
 # Environment variables
 .env
