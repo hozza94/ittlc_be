@@ -22,3 +22,7 @@ pip-wheel-metadata/
 
 # Environment variables
 .env
+
+# Docker
+docker-compose.yml
+docker-compose.yaml
