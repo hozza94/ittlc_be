@@ -17,3 +17,9 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+    
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return plain_password + "notreallyhashed" == hashed_password

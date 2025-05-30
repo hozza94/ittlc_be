@@ -19,6 +19,8 @@ ENV/
 pip-wheel-metadata/
 *.log
 
+# Test
+test/ 
 
 # Environment variables
 .env
