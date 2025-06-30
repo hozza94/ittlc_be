@@ -19,7 +19,7 @@ class MemberBase(BaseModel):
     memo: Optional[str] = None
 
 class MemberCreate(MemberBase):
-    user_id: int
+    pass
 
 class MemberUpdate(BaseModel):
     name: Optional[str] = None
@@ -38,7 +38,6 @@ class MemberUpdate(BaseModel):
 
 class MemberInDBBase(MemberBase):
     member_id: int
-    user_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
 

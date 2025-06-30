@@ -13,7 +13,6 @@ class Member(Base):
     __tablename__ = "members"
 
     member_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     
     name = Column(String(50), nullable=False)
     age = Column(Integer, nullable=True)
@@ -29,5 +28,5 @@ class Member(Base):
     registration_date = Column(Date, nullable=True)
     memo = Column(Text, nullable=True)
     
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
+    created_at = Column(Date, server_default=func.now())
+    updated_at = Column(Date, onupdate=func.now())
