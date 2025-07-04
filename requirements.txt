@@ -6,4 +6,6 @@ python-dotenv==1.0.0
 sqlalchemy==2.0.23
 pymysql==1.1.0
 alembic==1.12.1
-python-multipart==0.0.6 
+python-multipart==0.0.6
+libsql-client==0.5.0
+aiosqlite==0.19.0 

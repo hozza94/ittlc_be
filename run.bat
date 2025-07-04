@@ -24,6 +24,6 @@ echo.
 echo 서버를 중지하려면 Ctrl+C를 누르세요.
 echo.
 
-python run.py
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 pause 
