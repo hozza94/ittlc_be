@@ -41,7 +41,7 @@ async def migrate_to_libsql():
     
     try:
         # LibSQL 클라이언트 import
-        from libsql_client import create_client
+        from my_libsql_client import create_client
         
         # HTTP URL로 변환
         http_url = libsql_url.replace("libsql://", "https://")

@@ -1,44 +1,52 @@
 # backend/app/db/test_db_connection.py
-import os
 import sys
-from pathlib import Path
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+import os
+import asyncio
 
-# 프로젝트 루트 디렉토리를 시스템 경로에 추가
-project_root = str(Path(__file__).parent.parent.parent)
-if project_root not in sys.path:
-    sys.path.append(project_root)
+# 환경 변수 설정 (로컬 SQLite 파일 사용)
+os.environ['LIBSQL_URL'] = 'file:test.db'
+# AUTH_TOKEN은 로컬 파일에서는 필요없음
+if 'LIBSQL_AUTH_TOKEN' in os.environ:
+    del os.environ['LIBSQL_AUTH_TOKEN']
 
-# 이제 app 모듈을 import 할 수 있습니다
-from app.core.config import SQLALCHEMY_DATABASE_URL
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from app.services.libsql_service import libsql_service
 
-# 로깅 설정
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
-# 엔진 생성
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-def test_db_connection():
-    db = None
+async def create_users_table():
+    """users 테이블 생성"""
+    libsql_client = await libsql_service.get_client()
     try:
-        db = SessionLocal()
-        # 간단한 쿼리 실행
-        db.execute(text("SELECT 1"))
-        print("✅ Database connection successful!")
-        return True
-    except Exception as e:
-        print(f"❌ Database connection failed: {e}", file=sys.stderr)
-        return False
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            username TEXT NOT NULL,
+            role TEXT DEFAULT 'user',
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+        await libsql_client.execute(create_table_sql)
+        print('users 테이블 생성 완료')
     finally:
-        if db is not None:
-            db.close()
+        await libsql_client.close()
 
-if __name__ == "__main__":
-    if test_db_connection():
-        print("테스트가 성공적으로 완료되었습니다.")
-    else:
-        print("테스트 중 오류가 발생했습니다.")
+async def add_sample_user():
+    user_data = {
+        'email': 'user@example.com',
+        'password_hash': '1234',  # 실제 환경에서는 해시 사용 필요
+        'username': 'SampleUser',
+        'role': 'user',
+        'is_active': True
+    }
+    result = await libsql_service.create_user(user_data)
+    print('샘플 유저 추가 결과:', result)
+
+async def main():
+    await create_users_table()
+    await add_sample_user()
+
+if __name__ == '__main__':
+    asyncio.run(main())

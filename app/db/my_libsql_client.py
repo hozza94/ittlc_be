@@ -6,18 +6,22 @@ from libsql_client import create_client
 from typing import Optional
 
 class LibSQLClient:
-    def __init__(self):
-        self.url = os.getenv("LIBSQL_URL", "libsql://ittlcdb-hozza.aws-ap-northeast-1.turso.io")
-        self.auth_token = os.getenv("LIBSQL_AUTH_TOKEN")
-        
-        if self.auth_token:
-            self.client = create_client(
-                url=self.url,
-                auth_token=self.auth_token
+    def __init__(self, client):
+        self.client = client
+
+    @classmethod
+    async def create(cls, url=None, auth_token=None):
+        url = url or os.getenv("LIBSQL_URL", "libsql://ittlcdb-hozza.aws-ap-northeast-1.turso.io")
+        auth_token = auth_token or os.getenv("LIBSQL_AUTH_TOKEN")
+        if auth_token:
+            client = create_client(
+                url=url,
+                auth_token=auth_token
             )
         else:
-            self.client = create_client(url=self.url)
-    
+            client = create_client(url=url)
+        return cls(client)
+
     async def execute(self, sql: str, params: Optional[list] = None):
         """SQL 실행"""
         if params:
@@ -32,5 +36,4 @@ class LibSQLClient:
         """클라이언트 종료"""
         await self.client.close()
 
-# 전역 클라이언트 인스턴스
-libsql_client = LibSQLClient() 
+# 전역 인스턴스 제거 (필요할 때 async로 생성) 
